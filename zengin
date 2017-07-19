@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+# gem install pdf-reader
+
+require "pdf-reader"
+require 'open-uri'
+
+
+def parse(pdf)
+  PDF::Reader.new(open(pdf))
+    .pages
+    .map { |page| 
+      page
+        .text
+        .split(/\n/)
+        .map    { |text| text.strip }
+        .select { |text| /^\d{4}/ =~ text } 
+        .map    { |text| /^\d{4}[^\d]+\d{4}[^\d]+/ =~ text ? text.split("    ") : text }
+        .flatten
+        .select { |text| /^\d{4}/ =~ text } 
+        .map    { |text| text.gsub("  ", " ") }
+    }
+    .flatten
+end      
+
+[
+ 'https://www.zengin-net.jp/company/pdf/member1.pdf',
+ 'https://www.zengin-net.jp/company/pdf/member2.pdf',
+].each do |url|
+  puts parse(url)
+end
+

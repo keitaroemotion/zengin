@@ -1,0 +1,2 @@
+gem install pdf-reader
+cp zengin /usr/local/bin
